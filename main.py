@@ -1,7 +1,4 @@
 from tkinter import *
-from tkinter.ttk import Combobox
-from PIL import Image
-from PIL import ImageTk
 
 
 class Window:
@@ -12,10 +9,6 @@ class Window:
         self.root.resizable(resizable[0], resizable[1])
         self.root.iconbitmap(icon)
         self.root['bg'] = '#C0C0C0'
-
-        img = Image.open(r'check-mark.png')
-        img = img.resize((20, 20), Image.ANTIALIAS)
-        self.mark_img = ImageTk.PhotoImage(img)
 
     def draw_widget(self):
         brush_size = 3
@@ -43,14 +36,27 @@ class Window:
                 new_size = size_entry.get()
                 brush_size = int(new_size)
 
-        def color_change():
-            nonlocal color
-            new_color = pallete.get()
-            color = new_color
-
         def bg_color_change():
             nonlocal color
             canvas_area['bg'] = color
+
+        def color_accept():
+            new_color = hex_e.get()
+            nonlocal bt_color, color
+            bt_color['bg'] = new_color
+            color = new_color
+
+        def color_window():
+            window1 = Toplevel()
+            window1.geometry('250x100+300+200')
+
+            lb_desc = Label(window1, text='Enter Hex Colors(Example: #ff1489)', font='Arial 11')
+            lb_desc.place(x=5, y=5)
+
+            global hex_e
+            hex_e = Entry(window1, width=8)
+            hex_e.place(x=70, y=50)
+            Button(window1, text='Accept', command=color_accept, font='Arial 12').place(x=150, y=40)
 
         bg_btn = Button(frame_two, text='Background fill', width=14, command=lambda: bg_color_change())
         bg_btn.place(relx=.05, rely=.1)
@@ -69,12 +75,8 @@ class Window:
         size_entry.insert(0, 3)
         size_entry.bind('<Key>', brush_size_change)
 
-        pallete = Combobox(frame_two, values=('red', 'green', 'blue', 'yellow', 'black', 'white'), state='readonly')
-        pallete.set('black')
-        pallete.place(relx=.3, rely=.02, width=70)
-
-        bt_pallete = Button(frame_two, image=self.mark_img, bd=0, command=color_change)
-        bt_pallete.place(relx=.8, rely=.015)
+        bt_color = Button(frame_two, width=3, height=1, bg=color, command=color_window)
+        bt_color.place(relx=.3, rely=.02)
 
         canvas_area = Canvas(self.root, width=800, height=530, bg='white')
         canvas_area.bind('<B1-Motion>', paint)
