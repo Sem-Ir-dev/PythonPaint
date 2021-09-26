@@ -50,7 +50,7 @@ class Window:
             window1 = Toplevel()
             window1.geometry('250x100+300+200')
 
-            lb_desc = Label(window1, text='Enter Hex Colors(Example: #ff1489)', font='Arial 11')
+            lb_desc = Label(window1, text='Enter Hex Colors, or name\n of colors(Example: #ff1489, white)', font='Arial 11')
             lb_desc.place(x=5, y=5)
 
             global hex_e
@@ -58,11 +58,42 @@ class Window:
             hex_e.place(x=70, y=50)
             Button(window1, text='Accept', command=color_accept, font='Arial 12').place(x=150, y=40)
 
+        def btn_erase():
+            nonlocal color
+            color = 'white'
+
+        def wh_ch():
+            new_width = wid.get()
+            new_height = hei.get()
+            canvas_area['width'] = new_width
+            canvas_area['height'] = new_height
+
         bg_btn = Button(frame_two, text='Background fill', width=14, command=lambda: bg_color_change())
         bg_btn.place(relx=.05, rely=.1)
 
         clear_btn = Button(frame_two, text='Clear', width=14, command=lambda: canvas_area.delete('all'))
         clear_btn.place(relx=.05, rely=.16)
+
+        erase_btn = Button(frame_two, text='Eraser', width=14, command=btn_erase)
+        erase_btn.place(relx=.05, rely=.22)
+
+        lb_canvas = Label(frame_two, text='Canvas', width=14, bg=frame_col)
+        lb_canvas.place(relx=.17, rely=.28)
+
+        wid = Entry(frame_two, width=6)
+        wid.place(relx=.05, rely=.35)
+
+        lb_width = Label(frame_two, text='Width', width=8)
+        lb_width.place(relx=.4, rely=.35)
+
+        hei = Entry(frame_two, width=6)
+        hei.place(relx=.05, rely=.40)
+
+        lb_height = Label(frame_two, text='Height', width=8)
+        lb_height.place(relx=.4, rely=.40)
+
+        hw_accept = Button(frame_two, text='Accept', width=14, command=wh_ch)
+        hw_accept.place(relx=.16, rely=.48)
 
         size_lb = Label(frame_one, text='Brush size:', font='Arial 10', bg=frame_col)
         size_lb.place(relx=.01)
