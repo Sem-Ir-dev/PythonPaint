@@ -13,14 +13,17 @@ class Window:
     def draw_widget(self):
         brush_size = 3
         color = 'black'
-
         frame_col = '#F8F8F8'
+        frame_col2 = '#E0E0E0'
 
-        frame_one = Frame(self.root, bg=frame_col, height=20)
-        frame_one.place(relwidth=1)
+        up_frame = Frame(self.root, bg=frame_col, height=20)
+        up_frame.place(relwidth=1)
 
-        frame_two = Frame(self.root, bg=frame_col)
-        frame_two.place(relheight=.925, relwidth=.16, relx=.83, rely=.06)
+        brush_frame = Frame(up_frame, bg=frame_col2, width=90, height=20)
+        brush_frame.place(x=0, y=0)
+
+        right_frame = Frame(self.root, bg=frame_col)
+        right_frame.place(relheight=.925, relwidth=.16, relx=.83, rely=.06)
 
         def paint(event):
             nonlocal brush_size, color
@@ -50,7 +53,8 @@ class Window:
             window1 = Toplevel()
             window1.geometry('250x100+300+200')
 
-            lb_desc = Label(window1, text='Enter Hex Colors, or name\n of colors(Example: #ff1489, white)', font='Arial 11')
+            lb_desc = Label(window1, text='Enter Hex Colors, or name\n of colors(Example: #ff1489, white)',
+                            font='Arial 11')
             lb_desc.place(x=5, y=5)
 
             global hex_e
@@ -62,52 +66,57 @@ class Window:
             nonlocal color
             color = 'white'
 
-        def wh_ch():
+        def canvas_size_change():
             new_width = wid.get()
             new_height = hei.get()
             canvas_area['width'] = new_width
             canvas_area['height'] = new_height
 
-        bg_btn = Button(frame_two, text='Background fill', width=14, command=lambda: bg_color_change())
-        bg_btn.place(relx=.05, rely=.1)
+        # ============================ Верхняя боковая панель инструментов =====================================
 
-        clear_btn = Button(frame_two, text='Clear', width=14, command=lambda: canvas_area.delete('all'))
-        clear_btn.place(relx=.05, rely=.16)
+        size_lb = Label(brush_frame, text='Brush size:', font='Arial 10', bg=frame_col2)
+        size_lb.place(x=0, y=0)
 
-        erase_btn = Button(frame_two, text='Eraser', width=14, command=btn_erase)
-        erase_btn.place(relx=.05, rely=.22)
-
-        lb_canvas = Label(frame_two, text='Canvas', width=14, bg=frame_col)
-        lb_canvas.place(relx=.17, rely=.28)
-
-        wid = Entry(frame_two, width=6)
-        wid.place(relx=.05, rely=.35)
-
-        lb_width = Label(frame_two, text='Width', width=8)
-        lb_width.place(relx=.4, rely=.35)
-
-        hei = Entry(frame_two, width=6)
-        hei.place(relx=.05, rely=.40)
-
-        lb_height = Label(frame_two, text='Height', width=8)
-        lb_height.place(relx=.4, rely=.40)
-
-        hw_accept = Button(frame_two, text='Accept', width=14, command=wh_ch)
-        hw_accept.place(relx=.16, rely=.48)
-
-        size_lb = Label(frame_one, text='Brush size:', font='Arial 10', bg=frame_col)
-        size_lb.place(relx=.01)
-
-        pallete_lb = Label(frame_two, text='Color:', font='Arial 10', bg=frame_col)
-        pallete_lb.place(relx=.01, rely=0.02)
-
-        size_entry = Entry(frame_one, width=3, bd=0)
-        size_entry.place(relx=.09)
+        size_entry = Entry(brush_frame, width=3, bd=0, bg=frame_col2)
+        size_entry.place(x=75, y=3)
         size_entry.insert(0, 3)
         size_entry.bind('<Key>', brush_size_change)
 
-        bt_color = Button(frame_two, width=3, height=1, bg=color, command=color_window)
+        # ============================ Правая боковая панель инструментов ======================================
+        bg_btn = Button(right_frame, text='Background fill', width=14, command=lambda: bg_color_change())
+        bg_btn.place(relx=.05, rely=.1)
+
+        clear_btn = Button(right_frame, text='Clear', width=14, command=lambda: canvas_area.delete('all'))
+        clear_btn.place(relx=.05, rely=.16)
+
+        erase_btn = Button(right_frame, text='Eraser', width=14, command=btn_erase)
+        erase_btn.place(relx=.05, rely=.22)
+
+        lb_canvas = Label(right_frame, text='Canvas', width=14, bg=frame_col)
+        lb_canvas.place(relx=.17, rely=.28)
+
+        wid = Entry(right_frame, width=6)
+        wid.place(relx=.05, rely=.35)
+
+        lb_width = Label(right_frame, text='Width', width=8)
+        lb_width.place(relx=.4, rely=.35)
+
+        hei = Entry(right_frame, width=6)
+        hei.place(relx=.05, rely=.40)
+
+        lb_height = Label(right_frame, text='Height', width=8)
+        lb_height.place(relx=.4, rely=.40)
+
+        hw_accept = Button(right_frame, text='Accept', width=14, command=canvas_size_change)
+        hw_accept.place(relx=.16, rely=.48)
+
+        pallete_lb = Label(right_frame, text='Color:', font='Arial 10', bg=frame_col)
+        pallete_lb.place(relx=.01, rely=0.02)
+
+        bt_color = Button(right_frame, width=3, height=1, bg=color, command=color_window)
         bt_color.place(relx=.3, rely=.02)
+
+        # ====================================== Холст ===================================================
 
         canvas_area = Canvas(self.root, width=800, height=530, bg='white')
         canvas_area.bind('<B1-Motion>', paint)
