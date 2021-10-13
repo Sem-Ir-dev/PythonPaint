@@ -1,6 +1,6 @@
 # PythonPaint
 A simple drawing program built with Python Tkinter. Made by Sem_Ir
-![Image alt](https://github.com/Sem-Ir-dev/PythonPaint/blob/main/screenshots/main.png)
+![alt text](https://github.com/Sem-Ir-dev/PythonPaint/blob/main/screenshots/main.png)
 
 How to use:
 The program interface consists of:
