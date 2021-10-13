@@ -44,8 +44,8 @@ class Window:
             canvas_area['bg'] = color
 
         def color_accept():
-            new_color = hex_e.get()
             nonlocal bt_color, color
+            new_color = hex_e.get()
             bt_color['bg'] = new_color
             color = new_color
 
@@ -69,8 +69,17 @@ class Window:
         def canvas_size_change():
             new_width = wid.get()
             new_height = hei.get()
-            canvas_area['width'] = new_width
-            canvas_area['height'] = new_height
+            try:
+                if int(new_width) <= 1110:
+                    canvas_area['width'] = new_width
+
+                if int(new_height) <= 650:
+                    canvas_area['height'] = new_height
+            except (TclError, ValueError):
+                pass
+
+        def make_bt(place, txt, cmd):
+            return Button(place, text=txt, command=cmd, width=14, bd=1)
 
         # ============================ Верхняя боковая панель инструментов =====================================
 
@@ -83,44 +92,74 @@ class Window:
         size_entry.bind('<Key>', brush_size_change)
 
         # ============================ Правая боковая панель инструментов ======================================
-        bg_btn = Button(right_frame, text='Background fill', width=14, command=lambda: bg_color_change())
+
+        pallete_lb = Label(right_frame, text='Color:', font='Arial 10', bg=frame_col)
+        pallete_lb.place(relx=.05, rely=.02)
+
+        bt_color = Button(right_frame, width=3, height=1, bg=color, command=color_window)
+        bt_color.place(relx=.32, rely=.02)
+
+        bg_btn = make_bt(right_frame, 'Background fill', lambda: bg_color_change())
         bg_btn.place(relx=.05, rely=.1)
 
-        clear_btn = Button(right_frame, text='Clear', width=14, command=lambda: canvas_area.delete('all'))
+        clear_btn = make_bt(right_frame, 'Clear', lambda: canvas_area.delete('all'))
         clear_btn.place(relx=.05, rely=.16)
 
-        erase_btn = Button(right_frame, text='Eraser', width=14, command=btn_erase)
+        erase_btn = make_bt(right_frame, 'Eraser', btn_erase)
         erase_btn.place(relx=.05, rely=.22)
 
         lb_canvas = Label(right_frame, text='Canvas', width=14, bg=frame_col)
         lb_canvas.place(relx=.17, rely=.28)
 
         wid = Entry(right_frame, width=6)
+        wid.insert(0, '800')
         wid.place(relx=.05, rely=.35)
 
         lb_width = Label(right_frame, text='Width', width=8)
         lb_width.place(relx=.4, rely=.35)
 
         hei = Entry(right_frame, width=6)
+        hei.insert(0, '530')
         hei.place(relx=.05, rely=.40)
 
         lb_height = Label(right_frame, text='Height', width=8)
         lb_height.place(relx=.4, rely=.40)
 
-        hw_accept = Button(right_frame, text='Accept', width=14, command=canvas_size_change)
+        hw_accept = make_bt(right_frame, 'Accept', canvas_size_change)
         hw_accept.place(relx=.16, rely=.48)
-
-        pallete_lb = Label(right_frame, text='Color:', font='Arial 10', bg=frame_col)
-        pallete_lb.place(relx=.01, rely=0.02)
-
-        bt_color = Button(right_frame, width=3, height=1, bg=color, command=color_window)
-        bt_color.place(relx=.3, rely=.02)
 
         # ====================================== Холст ===================================================
 
-        canvas_area = Canvas(self.root, width=800, height=530, bg='white')
+        canvas_area = Canvas(self.root, width=800, height=530, bg='white', cursor='spraycan')
         canvas_area.bind('<B1-Motion>', paint)
         canvas_area.place(x=10, y=35)
+
+        self.draw_menu(frame_col2, canvas_area)
+
+    def draw_menu(self, color, canvas):
+        menu_bar = Menu(self.root)
+        file_menu = Menu(menu_bar, tearoff=0, bg='#fff', activebackground=color, activeforeground='#000')
+        edit_menu = Menu(menu_bar, tearoff=0, bg='#fff', activebackground=color, activeforeground='#000')
+        help_menu = Menu(menu_bar, tearoff=0, bg='#fff', activebackground=color, activeforeground='#000')
+
+        file_menu.add_command(label='New', command=lambda: canvas.delete('all'))
+        file_menu.add_separator()
+        file_menu.add_command(label='Settings')
+        file_menu.add_command(label='Exit', command=self.quit)
+
+        edit_menu.add_command(label='Size of canvas')
+        edit_menu.add_command(label='Brush settings')
+
+        help_menu.add_command(label='Documentation')
+        help_menu.add_command(label='About')
+
+        menu_bar.add_cascade(label='File', menu=file_menu)
+        menu_bar.add_cascade(label='Edit', menu=edit_menu)
+        menu_bar.add_cascade(label='Help', menu=help_menu)
+        self.root.configure(menu=menu_bar)
+
+    def quit(self):
+        self.root.quit()
 
     def run(self):
         self.root.mainloop()
